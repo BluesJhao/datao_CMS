@@ -1,0 +1,219 @@
+package com.iminer.biz.entity.job
+
+import org.springframework.dao.DataIntegrityViolationException
+import com.iminer.biz.entity.OperationPerson
+import grails.converters.JSON
+import java.text.SimpleDateFormat
+
+class UserJobDetailController {
+
+    static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
+
+    def index() {
+        redirect(action: "list", params: params)
+    }
+
+    def list(Integer max) {
+        params.max = Math.min(max ?: 10, 100)
+        [userJobDetailInstanceList: UserJobDetail.list(params), userJobDetailInstanceTotal: UserJobDetail.count()]
+    }
+
+    def create() {
+        [userJobDetailInstance: new UserJobDetail(params)]
+    }
+
+    def save() {
+		
+        def userJobDetailInstance = new UserJobDetail(params)
+		userJobDetailInstance.setIsAvailable(true)
+		userJobDetailInstance.setAttach(upload("jobAttach"))
+		
+        if (!userJobDetailInstance.save(flush: true)) {
+            render(view: "create", model: [userJobDetailInstance: userJobDetailInstance])
+            return
+        }
+		def ju = null
+		def list = params."personId-objId"
+		
+		for(String i : list.split(",")){
+			ju = new JobUser(jobId:userJobDetailInstance.id,personId:Integer.parseInt(i))
+			ju.save(flush: true)
+		}
+        flash.message = message(code: 'default.created.message', args: [message(code: 'userJobDetail.label', default: 'UserJobDetail'), userJobDetailInstance.id])
+        redirect(action: "show", id: userJobDetailInstance.id)
+    }
+
+    def show(Long id) {
+        def userJobDetailInstance = UserJobDetail.get(id)
+        if (!userJobDetailInstance) {
+            flash.message = message(code: 'default.not.found.message', args: [message(code: 'userJobDetail.label', default: 'UserJobDetail'), id])
+            redirect(action: "list")
+            return
+        }
+
+        [userJobDetailInstance: userJobDetailInstance]
+    }
+
+    def edit(Long id) {
+        def userJobDetailInstance = UserJobDetail.get(id)
+        if (!userJobDetailInstance) {
+            flash.message = message(code: 'default.not.found.message', args: [message(code: 'userJobDetail.label', default: 'UserJobDetail'), id])
+            redirect(action: "list")
+            return
+        }
+
+        [userJobDetailInstance: userJobDetailInstance]
+    }
+
+    def update(Long id, Long version) {
+        def userJobDetailInstance = UserJobDetail.get(id)
+        if (!userJobDetailInstance) {
+            flash.message = message(code: 'default.not.found.message', args: [message(code: 'userJobDetail.label', default: 'UserJobDetail'), id])
+            redirect(action: "list")
+            return
+        }
+
+        if (version != null) {
+            if (userJobDetailInstance.version > version) {
+                userJobDetailInstance.errors.rejectValue("version", "default.optimistic.locking.failure",
+                          [message(code: 'userJobDetail.label', default: 'UserJobDetail')] as Object[],
+                          "Another user has updated this UserJobDetail while you were editing")
+                render(view: "edit", model: [userJobDetailInstance: userJobDetailInstance])
+                return
+            }
+        }
+
+        userJobDetailInstance.properties = params
+		userJobDetailInstance.setIsAvailable(true)
+		userJobDetailInstance.setAttach(upload("jobAttach"))
+        if (!userJobDetailInstance.save(flush: true)) {
+            render(view: "edit", model: [userJobDetailInstance: userJobDetailInstance])
+            return
+        }
+		
+		def ju = null
+		def plist = (params."personId-objId").split(",")//2[4,29]  [4,29,67] [14,22,68]
+		print params."personId-objId"
+		def jUser = JobUser.findAll("from JobUser where jobId = :jobId",[jobId:userJobDetailInstance.id])//3[4,29,50]
+		jUser.each{ jobUser->
+			jobUser.delete(flush: true)
+		}
+		plist.each {number->
+			ju = new JobUser(jobId:userJobDetailInstance.id,personId:Integer.parseInt(number))
+			ju.save(flush: true)
+		}
+		
+//		for(int i =0;i<plist.size;i++){
+//			if(!ju){
+//				ju = new JobUser(jobId:userJobDetailInstance.id,personId:Integer.parseInt(list[i]))
+//				ju.save(flush: true)
+//			}
+//		}
+        flash.message = message(code: 'default.updated.message', args: [message(code: 'userJobDetail.label', default: 'UserJobDetail'), userJobDetailInstance.id])
+        redirect(action: "show", id: userJobDetailInstance.id)
+    }
+
+    def deleted(Long id) {
+        def userJobDetailInstance = UserJobDetail.get(id)
+        if (!userJobDetailInstance) {
+            flash.message = message(code: 'default.not.found.message', args: [message(code: 'userJobDetail.label', default: 'UserJobDetail'), id])
+            redirect(action: "list")
+            return
+        }
+
+        try {
+            userJobDetailInstance.delete(flush: true)
+            flash.message = message(code: 'default.deleted.message', args: [message(code: 'userJobDetail.label', default: 'UserJobDetail'), id])
+            redirect(action: "list")
+        }
+        catch (DataIntegrityViolationException e) {
+            flash.message = message(code: 'default.not.deleted.message', args: [message(code: 'userJobDetail.label', default: 'UserJobDetail'), id])
+            redirect(action: "show", id: id)
+        }
+    }
+	def upload = {name ->
+		def attach = request.getFile(name)
+		if(attach.originalFilename){
+			//得到路径
+			//def rootPath = OperationConfig.getImagePath();
+			def userDir = new File("d:\\file\\", File.separator+"upload"+File.separator+"attach")
+			userDir.mkdirs()
+			Date date = new Date()
+			SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmssSS")
+			def sourceName = attach.originalFilename
+			def saveFileName = format.format(date)+sourceName.substring(sourceName.lastIndexOf("."), sourceName.length())
+			//上传文件到本地
+			attach.transferTo(new File(userDir,saveFileName))
+			return userDir.path+File.separator+saveFileName
+		}
+		return null
+	}
+	
+	def selection = {
+		def select = {
+			if(params.type||params.event)
+			{
+				if(params.type){
+					eq("type", Integer.parseInt(params.type))
+				}
+				if(params.event){
+					like("jobContent", "%"+params.event+"%")
+				}
+			}
+			eq("isAvailable",true)
+		}
+		def results = UserJobDetail.createCriteria().list(params,select)
+		render results as JSON
+	}
+	def search = {
+		Integer max->
+		params.max = Math.min(max ?: 5, 100)
+		if("on".equals(params.isAvailable))
+			params.isAvailable = true
+		def select = {
+			if(params.type||params.name)
+			{
+				if(params.type){
+					eq("type", Integer.parseInt(params.type))
+				}
+				if(params.name){
+					def op = com.iminer.biz.entity.OperationPerson.findAllByNameLike(params.name+"%")
+					if(op){
+						def jlist = []
+						op.each {job->
+							def ju = JobUser.findAllByPersonId(job.id)
+							if(ju)
+								jlist = jlist+ju.jobId
+						}
+						"in"("id",jlist)
+					if(!op)
+						eq("id",null)
+					}else{
+						eq("id",null)
+					}
+				}
+			}
+			eq("isAvailable",new Boolean(params.isAvailable))
+		}
+		def results = UserJobDetail.createCriteria().list(params,select)
+		render(view: "list",model:[userJobDetailInstanceList: results,userJobDetailInstanceTotal: results.totalCount])
+		return
+//		params.max = Math.min(max ?: 10, 100)
+//		if("on".equals(params.isAvailable))
+//			params.isAvailable = true
+//		else 	
+//			params.isAvailable = false
+//		def results = null;
+//		String sql1 = "from UserJobDetail as u where u.id in (select jobId from JobUser where personId = (select id from OperationPerson where name = :name ) ) and type = (select id from JobCode where name = :tname) and isAvailable = :isAvailable"
+//		String sql2 = "from UserJobDetail as u where isAvailable = :isAvailable"
+//		if(params.type&&params.name)	
+//			results = UserJobDetail.findAll(sql1,[name:params.name,isAvailable:params.isAvailable,tname:params.type])
+//		else if(params.type||params.name)
+//			results = UserJobDetail.findAll(sql1.replaceFirst("and", "or"),[tname:params.type,name:params.name,isAvailable:params.isAvailable])
+//		else
+//			results = UserJobDetail.findAll(sql2,[isAvailable:params.isAvailable])
+//		print results.size	
+//		render(view: "list",model:[userJobDetailInstanceList: results,userJobDetailInstanceTotal: results.size])
+//		return
+	}
+}

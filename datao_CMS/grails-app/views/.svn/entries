@@ -1,0 +1,143 @@
+10
+
+dir
+52647
+svn://192.168.0.108/products/entminer_v3.0/datao_CMS/trunk/grails-app/views
+svn://192.168.0.108
+
+
+
+2015-12-30T02:12:40.832843Z
+52643
+lijiahao
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+dbb135fb-2b7b-4fee-9547-769d9f5c1a37
+
+error.gsp
+file
+
+
+
+
+2015-12-30T02:27:38.332616Z
+93b78b524c23bf0b71ca01a709d940b4
+2015-08-04T03:37:12.479349Z
+45774
+liudongri
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+287
+
+dictionaryInfo
+dir
+
+serverInfo
+dir
+
+message
+dir
+
+homePage
+dir
+
+operationPerson
+dir
+
+ioperationDictionaryCode
+dir
+
+
+
+delete
+
+userJobDetail
+dir
+
+login.gsp
+file
+
+
+
+
+2015-12-30T02:27:38.332616Z
+3125609dea996978c2b268a00eb18d64
+2015-08-04T03:37:12.479349Z
+45774
+liudongri
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2031
+
+layouts
+dir
+
+dutyInfo
+dir
+
+index
+dir
+
+privilegeOrganization
+dir
+
+ioperationDictionaryInfo
+dir
+
+
+
+delete
+
+ex
+dir
+
