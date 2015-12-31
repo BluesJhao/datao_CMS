@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
+	<info organisation="org.apache.pdfbox"
+		module="pdfbox"
+		revision="2.0.0-RC1"
+		status="release"
+		publication="20151218164703"
+	>
+		<description homepage="">
+		The Apache PDFBox library is an open source Java tool for working with PDF documents.
+		</description>
+		<m:dependency.management__org.bouncycastle__bcprov-jdk15on__version>1.53</m:dependency.management__org.bouncycastle__bcprov-jdk15on__version>
+		<m:dependency.management__junit__junit__scope>test</m:dependency.management__junit__junit__scope>
+		<m:properties__organization.logo>http://www.apache.org/images/asf_logo_wide.gif</m:properties__organization.logo>
+		<m:dependency.management__commons-logging__commons-logging__version>1.2</m:dependency.management__commons-logging__commons-logging__version>
+		<m:properties__project.reporting.outputEncoding>UTF-8</m:properties__project.reporting.outputEncoding>
+		<m:properties__distMgmtSnapshotsName>Apache Development Snapshot Repository</m:properties__distMgmtSnapshotsName>
+		<m:dependency.management__net.java.dev.jai-imageio__jai-imageio-core-standalone__scope>test</m:dependency.management__net.java.dev.jai-imageio__jai-imageio-core-standalone__scope>
+		<m:properties__maven.compiler.target>1.4</m:properties__maven.compiler.target>
+		<m:properties__distMgmtSnapshotsUrl>https://repository.apache.org/content/repositories/snapshots</m:properties__distMgmtSnapshotsUrl>
+		<m:properties__sourceReleaseAssemblyDescriptor>source-release</m:properties__sourceReleaseAssemblyDescriptor>
+		<m:dependency.management__com.levigo.jbig2__levigo-jbig2-imageio__scope>test</m:dependency.management__com.levigo.jbig2__levigo-jbig2-imageio__scope>
+		<m:properties__project.build.sourceEncoding>UTF-8</m:properties__project.build.sourceEncoding>
+		<m:dependency.management__junit__junit__version>4.12</m:dependency.management__junit__junit__version>
+		<m:dependency.management__org.bouncycastle__bcpkix-jdk15on__version>1.53</m:dependency.management__org.bouncycastle__bcpkix-jdk15on__version>
+		<m:dependency.management__commons-io__commons-io__version>2.4</m:dependency.management__commons-io__commons-io__version>
+		<m:properties__svn.scmJavadocUrl>https://svn.apache.org/repos/asf/pdfbox/cmssite/trunk/content/docs/${project.version}/javadocs</m:properties__svn.scmJavadocUrl>
+		<m:properties__maven.compiler.source>1.4</m:properties__maven.compiler.source>
+		<m:dependency.management__net.java.dev.jai-imageio__jai-imageio-core-standalone__version>1.2-pre-dr-b04-2013-04-23</m:dependency.management__net.java.dev.jai-imageio__jai-imageio-core-standalone__version>
+		<m:properties__gpg.useagent>true</m:properties__gpg.useagent>
+		<m:maven.plugins>org.apache.maven.plugins__maven-remote-resources-plugin__null|org.apache.maven.plugins__maven-remote-resources-plugin__null|null__maven-compiler-plugin__null|null__maven-javadoc-plugin__null|null__maven-release-plugin__null|org.apache.maven.plugins__maven-jar-plugin__null|org.apache.maven.plugins__maven-source-plugin__null|org.codehaus.mojo__animal-sniffer-maven-plugin__1.13|org.apache.maven.plugins__maven-remote-resources-plugin__null|org.apache.maven.plugins__maven-remote-resources-plugin__null|null__maven-compiler-plugin__null|null__maven-javadoc-plugin__null|null__maven-release-plugin__null|org.apache.maven.plugins__maven-jar-plugin__null|org.apache.maven.plugins__maven-source-plugin__null|org.codehaus.mojo__animal-sniffer-maven-plugin__1.13|null__maven-surefire-plugin__null|org.apache.felix__maven-bundle-plugin__null|org.apache.rat__apache-rat-plugin__null|org.apache.maven.plugins__maven-scm-publish-plugin__null</m:maven.plugins>
+		<m:dependency.management__com.levigo.jbig2__levigo-jbig2-imageio__version>1.6.3</m:dependency.management__com.levigo.jbig2__levigo-jbig2-imageio__version>
+		<m:dependency.management__log4j__log4j__version>1.2.17</m:dependency.management__log4j__log4j__version>
+		<m:dependency.management__org.bouncycastle__bcmail-jdk15on__version>1.53</m:dependency.management__org.bouncycastle__bcmail-jdk15on__version>
+	</info>
+	<configurations>
+		<conf name="default" visibility="public" description="runtime dependencies and master artifact can be used with this conf" extends="runtime,master"/>
+		<conf name="master" visibility="public" description="contains only the artifact published by this module itself, with no transitive dependencies"/>
+		<conf name="compile" visibility="public" description="this is the default scope, used if none is specified. Compile dependencies are available in all classpaths."/>
+		<conf name="provided" visibility="public" description="this is much like compile, but indicates you expect the JDK or a container to provide it. It is only available on the compilation classpath, and is not transitive."/>
+		<conf name="runtime" visibility="public" description="this scope indicates that the dependency is not required for compilation, but is for execution. It is in the runtime and test classpaths, but not the compile classpath." extends="compile"/>
+		<conf name="test" visibility="private" description="this scope indicates that the dependency is not required for normal use of the application, and is only available for the test compilation and execution phases." extends="runtime"/>
+		<conf name="system" visibility="public" description="this scope is similar to provided except that you have to provide the JAR which contains it explicitly. The artifact is always available and is not looked up in a repository."/>
+		<conf name="sources" visibility="public" description="this configuration contains the source artifact of this module, if any."/>
+		<conf name="javadoc" visibility="public" description="this configuration contains the javadoc artifact of this module, if any."/>
+		<conf name="optional" visibility="public" description="contains all optional dependencies"/>
+	</configurations>
+	<publications>
+		<artifact name="pdfbox" type="bundle" ext="jar" conf="master"/>
+		<artifact name="pdfbox" type="source" ext="jar" conf="sources" m:classifier="sources"/>
+		<artifact name="pdfbox" type="javadoc" ext="jar" conf="javadoc" m:classifier="javadoc"/>
+	</publications>
+	<dependencies>
+		<dependency org="org.apache.pdfbox" name="fontbox" rev="2.0.0-RC1" force="true" conf="compile->compile(*),master(*);runtime->runtime(*)"/>
+		<dependency org="commons-logging" name="commons-logging" rev="1.2" force="true" conf="compile->compile(*),master(*);runtime->runtime(*)"/>
+		<dependency org="org.bouncycastle" name="bcmail-jdk15on" rev="1.53" force="true" conf="optional->compile(*),master(*)"/>
+		<dependency org="org.bouncycastle" name="bcprov-jdk15on" rev="1.53" force="true" conf="optional->compile(*),master(*)"/>
+		<dependency org="junit" name="junit" rev="4.12" force="true" conf="test->runtime(*),master(*)"/>
+		<dependency org="com.levigo.jbig2" name="levigo-jbig2-imageio" rev="1.6.3" force="true" conf="test->runtime(*),master(*)"/>
+		<dependency org="net.java.dev.jai-imageio" name="jai-imageio-core-standalone" rev="1.2-pre-dr-b04-2013-04-23" force="true" conf="test->runtime(*),master(*)"/>
+		<override org="org.bouncycastle" module="bcprov-jdk15on" matcher="exact" rev="1.53"/>
+		<override org="junit" module="junit" matcher="exact" rev="4.12"/>
+		<override org="commons-logging" module="commons-logging" matcher="exact" rev="1.2"/>
+		<override org="net.java.dev.jai-imageio" module="jai-imageio-core-standalone" matcher="exact" rev="1.2-pre-dr-b04-2013-04-23"/>
+		<override org="com.levigo.jbig2" module="levigo-jbig2-imageio" matcher="exact" rev="1.6.3"/>
+		<override org="junit" module="junit" matcher="exact" rev="4.12"/>
+		<override org="commons-io" module="commons-io" matcher="exact" rev="2.4"/>
+		<override org="org.bouncycastle" module="bcpkix-jdk15on" matcher="exact" rev="1.53"/>
+		<override org="net.java.dev.jai-imageio" module="jai-imageio-core-standalone" matcher="exact" rev="1.2-pre-dr-b04-2013-04-23"/>
+		<override org="org.bouncycastle" module="bcmail-jdk15on" matcher="exact" rev="1.53"/>
+		<override org="log4j" module="log4j" matcher="exact" rev="1.2.17"/>
+		<override org="com.levigo.jbig2" module="levigo-jbig2-imageio" matcher="exact" rev="1.6.3"/>
+	</dependencies>
+</ivy-module>
